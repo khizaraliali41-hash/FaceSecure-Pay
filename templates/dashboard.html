@@ -47,6 +47,12 @@
             transition: transform 0.3s ease;
         }
         .stats-card:hover { transform: translateY(-5px); }
+        
+        /* Smooth transition for security box */
+        .security-box {
+            transition: all 0.4s ease-in-out;
+            border-left: 4px solid #0d6efd;
+        }
     </style>
 </head>
 
@@ -99,9 +105,20 @@
                         <canvas id="pieChart"></canvas>
                     </div>
                     <hr class="my-4">
-                    <div class="p-3 rounded" style="background: #f0f7ff; border-left: 4px solid #0d6efd;">
-                        <small class="text-primary fw-bold">BLOCKCHAIN LEDGER</small>
-                        <p class="small mb-0 text-muted">Sync Status: <span class="text-success fw-bold">Verified</span></p>
+                    
+                    <div class="p-3 rounded security-box {{ 'bg-success-subtle' if is_secure else 'bg-danger-subtle' }}" 
+                         style="border-left-color: {{ '#198754' if is_secure else '#dc3545' }};">
+                        <small class="{{ 'text-success' if is_secure else 'text-danger' }} fw-bold">BLOCKCHAIN LEDGER</small>
+                        <p class="small mb-0 text-muted">Sync Status: 
+                            <span class="{{ 'text-success' if is_secure else 'text-danger' }} fw-bold">
+                                {{ blockchain_status }}
+                            </span>
+                        </p>
+                        {% if not is_secure %}
+                        <div class="mt-2 p-1 bg-white border border-danger rounded text-center">
+                            <small class="text-danger fw-bold" style="font-size: 0.7rem;">⚠️ DATABASE TAMPERING DETECTED</small>
+                        </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -140,7 +157,9 @@
                             <td class="ps-4 text-muted small">#{{ user[0] }}</td>
                             <td class="fw-bold">{{ user[1] }}</td>
                             <td>${{ user[2] }}</td>
-                            <td class="text-danger fw-bold">${{ user[3] }}</td>
+                            <td class="{{ 'text-danger' if user[3] > user[2] else 'text-primary' }} fw-bold">
+                                ${{ user[3] }}
+                            </td>
                             <td class="text-center">
                                 <a href="/delete_user/{{ user[0] }}" class="btn btn-outline-danger btn-sm rounded-pill px-3">Revoke Access</a>
                             </td>
@@ -156,12 +175,10 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     
     <script>
-        // Flask se data array mein convert ho kar yahan aayega
         const userData = {
             labels: [{% for user in users %}"{{ user[1]|safe }}"{% if not loop.last %},{% endif %}{% endfor %}],
             spent: [{% for user in users %}{{ user[3] if user[3] != None else 0 }}{% if not loop.last %},{% endif %}{% endfor %}]
         };
-        console.log("Chart Data Initialized:", userData);
     </script>
     
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
