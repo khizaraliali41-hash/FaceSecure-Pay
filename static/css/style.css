@@ -1,0 +1,152 @@
+/* Clean Light Theme */
+.dashboard-body {
+    background-color: #f8f9fa;
+    color: #212529;
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+}
+
+/* ANTI-HIGHLIGHT: Browser ki translation patti khatam karne ke liye */
+.notranslate, .security-status-text, .brand-title, font, span {
+    background: transparent !important;
+    background-color: transparent !important;
+    -webkit-tap-highlight-color: transparent !important;
+    text-decoration: none !important;
+}
+
+.brand-title {
+    color: #0d6efd !important;
+    font-weight: 800;
+    letter-spacing: -1px;
+}
+
+.security-status-text {
+    color: #0d6efd !important; 
+    font-weight: 700;
+}
+
+/* Premium Cards */
+.stats-card {
+    background: #ffffff !important;
+    border: none !important;
+    border-radius: 16px !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.04) !important;
+    transition: transform 0.3s ease;
+}
+
+.stats-card:hover {
+    transform: translateY(-5px);
+}
+
+.card-label {
+    color: #6c757d;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+/* Live Feed Box Styling */
+.live-feed-container {
+    background: #000;
+    border-radius: 20px;
+    height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    border: 4px solid #ffffff;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1) !important;
+}
+
+.scan-line {
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(to bottom, transparent, #0d6efd, transparent);
+    position: absolute;
+    top: 0;
+    animation: scan 3s linear infinite;
+    z-index: 5;
+}
+
+@keyframes scan {
+    0% { top: 0; }
+    100% { top: 100%; }
+}
+
+/* Blockchain Status Card */
+.blockchain-card {
+    background: #f1f7ff;
+    border-left: 4px solid #0d6efd;
+    transition: all 0.3s ease;
+}
+
+.blockchain-card:hover {
+    background: #e7f1ff;
+}
+
+/* Chart Container */
+.chart-container {
+    position: relative;
+    width: 100%;
+}
+
+.status-badge {
+    background: #e7f3ff;
+    color: #0d6efd;
+    padding: 8px 18px;
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border: 1px solid rgba(13, 110, 253, 0.1);
+}
+
+/* Pulse Animation for Live Status */
+.pulse-dot {
+    width: 10px;
+    height: 10px;
+    background-color: #ff4d4d;
+    border-radius: 50%;
+    display: inline-block;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(255, 77, 77, 0.7); }
+    70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(255, 77, 77, 0); }
+    100% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(255, 77, 77, 0); }
+}
+
+/* Table Design */
+.table-container {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid #eee;
+}
+
+.table thead th {
+    background-color: #f8f9fa;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    color: #6c757d;
+    padding: 15px;
+}
+
+/* Google Translate ki highlight khatam karne ke liye */
+.security-status-text font { 
+    background: transparent !important; 
+    background-color: transparent !important;
+}
+
+/* External highlights ko khatam karne ke liye force reset */
+mark, .highlighted, [class*="highlight"] {
+    background-color: transparent !important;
+    color: inherit !important;
+}
+
+/* Browser selection highlight ko bhi control mein rakhta hai */
+::selection {
+    background: rgba(13, 110, 253, 0.2); /* Light blue highlight instead of yellow */
+    color: inherit;
+}
