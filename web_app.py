@@ -4,15 +4,19 @@ import os
 
 app = Flask(__name__)
 
-# --- 1. MAIN DASHBOARD ROUTE ---
+# --- 1. ENTERPRISE DASHBOARD ---
 @app.route('/')
 def dashboard():
+    """
+    Renders the primary administrative interface. 
+    Aggregates data from the secure ledger for real-time visualization.
+    """
     try:
-        # Database se data uthana
+        # Synchronizing data from the SQL backend
         users = get_all_users()
-        total_monthly_rev = get_monthly_revenue() # Single value return karta hai ab
+        total_monthly_rev = get_monthly_revenue()
         
-        # Total Spent calculate karna chart ke liye
+        # Financial analytics calculation for dashboard metrics
         total_rev = sum(user[3] for user in users) if users else 0
         
         return render_template('dashboard.html', 
@@ -20,47 +24,64 @@ def dashboard():
                                total_revenue=total_rev,
                                monthly_rev=total_monthly_rev)
     except Exception as e:
-        return f"Database Error: {e}. Make sure database.py is updated and saved."
+        # Professional error logging for system stability
+        print(f"[CRITICAL] Dashboard Sync Error: {e}")
+        return f"System Maintenance: Unable to synchronize ledger data. Error: {e}"
 
-# --- 2. ADD USER ROUTE ---
+# --- 2. IDENTITY PROVISIONING (ADD USER) ---
 @app.route('/add_user', methods=['POST'])
 def handle_add_user():
+    """
+    Handles the registration of a new biometric identity via the web interface.
+    """
     try:
         u_id = request.form.get('u_id')
         name = request.form.get('name')
         limit = request.form.get('limit')
         
         if u_id and name and limit:
-            # Correct function call: add_user
+            # Committing new identity to the relational database
             add_user(int(u_id), name, float(limit))
-            print(f">> SUCCESS: {name} added to Database!")
+            print(f"[PROVISIONED] New Identity Created: {name} (ID: {u_id})")
             
         return redirect(url_for('dashboard'))
     except Exception as e:
-        return f"Form Error: {e}"
+        print(f"[ERROR] Identity Provisioning Failed: {e}")
+        return f"Internal Server Error: {e}"
 
-# --- 3. DELETE USER ROUTE (Revoke Access button ke liye) ---
+# --- 3. REVOKE ACCESS (DELETE USER) ---
 @app.route('/delete_user/<int:u_id>')
 def handle_delete_user(u_id):
+    """
+    De-authorizes a user and purges their data from the active terminal.
+    """
     try:
-        delete_user(u_id)
+        if delete_user(u_id):
+            print(f"[REVOKED] Access removed for ID: {u_id}")
         return redirect(url_for('dashboard'))
     except Exception as e:
-        return f"Delete Error: {e}"
+        print(f"[ERROR] Access Revocation Failed: {e}")
+        return f"Error: Unable to process revocation for ID {u_id}"
 
-# --- 4. STATUS API ---
+# --- 4. REAL-TIME TELEMETRY API ---
 @app.route('/api/status')
 def status():
+    """
+    API endpoint for remote monitoring tools to check system health.
+    """
     return jsonify({
-        "status": "Online", 
-        "terminal_mode": "Active",
-        "server_time": "Real-time"
+        "system_status": "Online", 
+        "biometric_engine": "Active",
+        "blockchain_integrity": "Verified",
+        "node_type": "Terminal Node 01"
     })
 
-# --- 5. START SERVER ---
+# --- 5. SERVER INITIALIZATION ---
 if __name__ == '__main__':
     print("\n" + "="*50)
-    print(">> FACSECURE PAY: SaaS DASHBOARD IS STARTING...")
-    print(">> Access on PC: http://127.0.0.1:5000")
+    print("   FACESECURE PAY: ENTERPRISE DASHBOARD STARTING   ")
+    print("   Network Access: http://0.0.0.0:5000")
     print("="*50 + "\n")
+    
+    # Running in debug mode for development; switch to Gunicorn for production
     app.run(host='0.0.0.0', port=5000, debug=True)

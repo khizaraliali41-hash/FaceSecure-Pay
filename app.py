@@ -5,45 +5,50 @@ from database import get_all_users, add_user, DB_NAME
 
 app = Flask(__name__)
 
-# --- BLOCKCHAIN INTEGRITY VERIFICATION ---
 def verify_blockchain():
     """
     Validates the integrity of all transactions by re-calculating 
-    the SHA-256 hashes in a sequential chain.
+    the SHA-256 hashes in a sequential cryptographic chain.
     """
-    conn = sqlite3.connect(DB_NAME)
-    cursor = conn.cursor()
-    # Fetching transactions in ascending order to verify the chain
-    cursor.execute("SELECT user_id, amount, date, tx_hash FROM transactions ORDER BY id ASC")
-    txs = cursor.fetchall()
-    conn.close()
+    try:
+        conn = sqlite3.connect(DB_NAME)
+        cursor = conn.cursor()
+        # Fetching transactions in ascending order to verify the chain continuity
+        cursor.execute("SELECT user_id, amount, date, tx_hash FROM transactions ORDER BY id ASC")
+        txs = cursor.fetchall()
+        conn.close()
+    except Exception as e:
+        return False, f"DATABASE ERROR: {str(e)}"
 
     prev_hash = "00000000"
     for tx in txs:
         u_id, amount, date, saved_hash = tx
         
-        # Re-calculating the hash for verification
+        # Re-calculating the block hash for verification against the ledger
         block_string = f"{u_id}-{amount}-{date}-{prev_hash}"
         calculated_hash = hashlib.sha256(block_string.encode()).hexdigest()
         
-        # Check if the data has been tampered with
+        # Validation gate: Detects unauthorized manual modifications in the database
         if calculated_hash != saved_hash:
-            return False, "⚠️ TAMPERED: Database Integrity Compromised!"
+            return False, "CRITICAL: DATABASE INTEGRITY COMPROMISED"
         
-        # Update prev_hash for the next block in the chain
+        # Update previous hash pointer for the next block in the sequence
         prev_hash = saved_hash
     
-    return True, "✅ SECURE: Ledger Synchronized"
+    return True, "SYSTEM SECURE: LEDGER SYNCHRONIZED"
 
 @app.route('/')
 def dashboard():
-    """Renders the main admin dashboard with real-time security status."""
+    """
+    Renders the primary administrative interface with real-time analytics 
+    and security telemetry.
+    """
     users = get_all_users()
     
-    # Perform real-time blockchain integrity check
+    # Real-time execution of the blockchain integrity protocol
     is_secure, status_message = verify_blockchain()
     
-    # Calculate total revenue; 'spent' amount is at index 3 of the user tuple
+    # Calculate aggregate revenue across all registered identities
     total_revenue = sum(user[3] for user in users) if users else 0
     
     return render_template('dashboard.html', 
@@ -54,7 +59,9 @@ def dashboard():
 
 @app.route('/add_user', methods=['POST'])
 def handle_add_user():
-    """Handles the form submission to register a new user."""
+    """
+    Processes the registration of a new identity and initializes their credit parameters.
+    """
     u_id = request.form.get('u_id')
     name = request.form.get('name')
     limit = request.form.get('limit')
@@ -66,23 +73,26 @@ def handle_add_user():
 
 @app.route('/delete_user/<int:u_id>')
 def delete_user(u_id):
-    """Deletes a user and their associated transaction history from the database."""
+    """
+    Purges a user profile and their associated transaction history for data consistency.
+    """
     try:
         conn = sqlite3.connect(DB_NAME)
         cursor = conn.cursor()
         
-        # Delete user from the users table
+        # Remove primary user record
         cursor.execute("DELETE FROM users WHERE u_id = ?", (u_id,))
         
-        # Also clean up transaction history for data consistency
+        # Purge associated transaction history to maintain relational integrity
         cursor.execute("DELETE FROM transactions WHERE user_id = ?", (u_id,))
         
         conn.commit()
         conn.close()
     except Exception as e:
-        print(f">> DATABASE ERROR: {e}")
+        print(f"CRITICAL SYSTEM ERROR: {e}")
         
     return redirect(url_for('dashboard'))
 
 if __name__ == '__main__':
+    # Initializing server in development mode
     app.run(debug=True)
