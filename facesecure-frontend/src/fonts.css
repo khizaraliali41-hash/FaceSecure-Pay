@@ -1,0 +1,50 @@
+
+/* 1. BRANDING (Bricolage) */
+@font-face {
+  font-family: 'Bricolage';
+  src: url('./fonts/Bricolage.ttf') format('truetype');
+  font-weight: normal;
+  font-display: swap;
+}
+
+/* 2. BASE UI (DM Sans) */
+@font-face {
+  font-family: 'DM Sans';
+  src: url('./fonts/DMSans.ttf') format('truetype');
+  font-weight: normal;
+  font-display: swap;
+}
+
+/* 3. TECHNICAL (JetBrains) */
+@font-face {
+  font-family: 'JetBrains';
+  src: url('./fonts/JetBrains.ttf') format('truetype');
+  font-weight: normal;
+  font-display: swap;
+}
+
+/* --- Global Elite Styling --- */
+:root {
+  --primary-font: 'DM Sans', sans-serif;
+  --heading-font: 'Bricolage', sans-serif;
+  --mono-font: 'JetBrains', monospace;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--primary-font) !important;
+  background-color: #050505; /* Deep Noir */
+  color: #F8F9FA;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, .brand-title {
+  font-family: var(--heading-font);
+  letter-spacing: -0.03em;
+  font-weight: 700;
+}
+
+code, .terminal-text {
+  font-family: var(--mono-font);
+}
