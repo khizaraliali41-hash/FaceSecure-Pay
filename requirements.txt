@@ -1,11 +1,9 @@
-# FaceSecure Pay: Core Dependencies
-opencv-python
-opencv-contrib-python
-numpy
-customtkinter
-matplotlib
-Flask
-sqlite3
-# DeepFace aur biometrics ke liye (agar aap future mein upgrade karein)
+fastapi
+uvicorn
 deepface
 tf-keras
+opencv-python-headless
+numpy
+psycopg2-binary
+matplotlib
+Flask
