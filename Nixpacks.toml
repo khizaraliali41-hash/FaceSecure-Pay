@@ -1,2 +1,5 @@
 [phases.setup]
-nixPkgs = ["...", "libxcb", "libX11", "libXext", "libSM", "libICE"]
+nixPkgs = ["python3", "libxcb", "libX11", "libXext", "libSM", "libICE", "glib", "libGL"]
+
+[start]
+cmd = "uvicorn app:app --host 0.0.0.0 --port $PORT"
