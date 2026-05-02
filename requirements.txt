@@ -6,4 +6,3 @@ opencv-python-headless
 numpy
 psycopg2-binary
 matplotlib
-Flask
